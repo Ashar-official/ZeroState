@@ -1,0 +1,322 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroState - Ultimate WordPress Reset Plugin 🚀</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .hero-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .pricing-card, .guarantee-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .comparison-table th {
+            background: rgba(0, 0, 0, 0.05);
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .highlight {
+            background: rgba(34, 197, 94, 0.2);
+            color: #15803d;
+            font-weight: bold;
+            border: 2px solid #22c55e;
+        }
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .comparison-table .check {
+            color: #22c55e;
+            font-size: 1.2rem;
+        }
+        .comparison-table .cross {
+            color: #ef4444;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased bg-gray-50">
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold mb-4">ZeroState 🚀</h1>
+            <p class="text-xl mb-6">The Ultimate WordPress Reset Plugin to Truly Refresh Your Site in Seconds! 🌟</p>
+            <p class="text-lg mb-8">Don’t miss out! Transform your WordPress experience with a one-time payment of <strong>$29</strong> for lifetime access! 🎉</p>
+            <button id="purchase-hero" class="bg-yellow-400 text-gray-900 font-semibold py-3 px-6 rounded-lg cursor-pointer hover:bg-yellow-500 transition duration-300">Buy Now</button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">Powerful Features to Reset & Refresh 🛠️</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Full Site Reset 🗑️</h3>
+                    <p>Completely reset your WordPress site, deleting all content and settings while preserving only your admin account, core files, and ZeroState. 🚀</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Partial Reset Tools 🔧</h3>
+                    <p>Precisely target transients, theme options, themes, plugins, uploads, or custom tables for unmatched control. 🎯</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Backup Warnings ⚠️</h3>
+                    <p>Robust confirmation sliders and warnings ensure no accidental resets, keeping your data safe. 📝</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">ZeroState: The True Reset Champion 🌟</h2>
+            <p class="text-lg text-center mb-8">Unlike other plugins that only deactivate or disable, ZeroState delivers a complete, permanent reset for a fresh WordPress start. See how we outshine the rest! 🚀</p>
+            <div class="overflow-x-auto">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th class="highlight">ZeroState</th>
+                            <th>WP Reset</th>
+                            <th>WP Database Reset</th>
+                            <th>Advanced WP Reset</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Full Site Reset</td>
+                            <td class="highlight">✅ Deletes all posts, pages,
+                            comments, media, plugins, themes, and custom tables for a true fresh start.</td>
+                            <td>✅ Deactivates plugins/themes, deletes content, but requires manual cleanup for complete reset.</td>
+                            <td>✅ Resets database but leaves plugins/themes intact, requiring manual deletion.</td>
+                            <td>✅ Deletes content but retains plugins/themes, needing extra steps for full reset.</td>
+                        </tr>
+                        <tr>
+                            <td>Partial Reset Tools</td>
+                            <td class="highlight">✅ Comprehensive: Deletes transients, theme options, all themes/plugins, uploads, custom tables (truncate/drop), and .htaccess with precision.</td>
+                            <td>✅ Offers similar tools but only deactivates plugins/themes, not deletes them.</td>
+                            <td>✅ Resets specific tables but lacks tools for themes, plugins, or uploads.</td>
+                            <td>✅ Custom reset options but retains plugins/themes unless manually deleted.</td>
+                        </tr>
+                        <tr>
+                            <td>Backup Warnings</td>
+                            <td class="highlight">✅ Robust sliders and clear, multi-step warnings prevent accidental data loss.</td>
+                            <td>✅ Basic confirmation prompts, less intuitive interface.</td>
+                            <td>✅ Simple security code, minimal warning emphasis.</td>
+                            <td>✅ Confirmation prompts but less focus on safety.</td>
+                        </tr>
+                        <tr>
+                            <td>Database Snapshots</td>
+                            <td class="highlight">✅ Advanced snapshots with one-click restore, including custom tables and exportable SQL dumps.</td>
+                            <td>✅ Snapshots available but cumbersome export/restore process.</td>
+                            <td>❌ No snapshots, relies on external backups.</td>
+                            <td>✅ Snapshots in Pro version only, limited functionality in free.</td>
+                        </tr>
+                        <tr>
+                            <td>File Deletion</td>
+                            <td class="highlight">✅ Deletes uploads, all themes/plugins, and .htaccess for a complete, no-manual-cleanup reset.</td>
+                            <td>❌ Deletes uploads/themes only if selected; plugins/themes mostly deactivated.</td>
+                            <td>❌ No file deletion, database-only focus.</td>
+                            <td>❌ Retains most files, requires manual deletion.</td>
+                        </tr>
+                        <tr>
+                            <td>Multisite Support</td>
+                            <td class="highlight">✅ Full multisite compatibility for network-wide or site-specific resets.</td>
+                            <td>❌ Limited multisite support, only in Pro version.</td>
+                            <td>❌ No multisite support.</td>
+                            <td>❌ No multisite support.</td>
+                        </tr>
+                        <tr>
+                            <td>Pricing</td>
+                            <td class="highlight">✅ $29 one-time payment for lifetime access to all features.</td>
+                            <td>❌ Freemium; key features locked in Pro version ($49-$249/year).</td>
+                            <td>✅ Free but lacks advanced features.</td>
+                            <td>❌ Freemium; advanced features require Pro ($39-$199/year).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Features Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">Dive Into Partial Reset Tools 🔍</h2>
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Delete Transients 🕒</h3>
+                    <p>Clear all temporary cache entries to boost performance and free up database space.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Reset Theme Options 🎨</h3>
+                    <p>Revert theme customizations made via the Customizer to their default settings.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Delete All Themes 🖼️</h3>
+                    <p>Remove all active and unused themes.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Delete All Plugins 🔌</h3>
+                    <p>Deactivate and delete all plugins.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-2">Clean Uploads Folder 📁</h3>
+                    <p>Delete all files and folders in the /wp-content/uploads/ directory for a clean slate.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Empty or Delete Custom Tables 🗄️</h3>
+                    <p>Truncate or drop custom database tables not part of WordPress core.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Delete .htaccess File 📜</h3>
+                    <p>Remove the .htaccess file, which WordPress can regenerate as needed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Money Back Guarantee Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-12">100% Money Back Guarantee 🛡️</h2>
+            <div class="guarantee-card max-w-md mx-auto p-8 rounded-lg shadow-lg">
+                <p class="text-lg mb-6">You are fully protected by our 100% Money Back Guarantee. If during the next 14 days you experience an issue that makes the plugin unusable and we are unable to resolve it, we'll happily consider offering a full refund of your money. 💰</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-12">Get ZeroState for a One-Time Payment! 🎉</h2>
+            <div class="pricing-card max-w-md mx-auto p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-semibold mb-4">Lifetime Access</h3>
+                <p class="text-4xl font-bold mb-4">$29</p>
+                <p class="text-lg mb-6">Unlock all premium features with a one-time payment. No subscriptions, no hassle! 🚀</p>
+                <button id="purchase-pricing" class="bg-yellow-400 text-gray-900 font-semibold py-3 px-6 rounded-lg cursor-pointer hover:bg-yellow-500 transition duration-300">Buy Now</button>
+                <p class="text-sm mt-4 text-red-600">⚠️ Limited Time Offer! Don’t wait—secure your lifetime license today!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="mb-4">ZeroState - Reset Your WordPress Site with Confidence! 🔒</p>
+            <p class="text-sm">⚠️ Always back up your site before performing resets. Actions are irreversible.</p>
+        </div>
+    </footer>
+
+    <!-- Freemius Checkout Script -->
+    <script type="text/javascript" src="https://checkout.freemius.com/js/v1/"></script>
+    <script type="text/javascript">
+        const handler = new FS.Checkout({
+            product_id: '19662',
+            plan_id: '32586',
+            public_key: 'pk_300bc87ce58f2a6831a92d59b1768',
+            image: 'https://your-plugin-site.com/logo-100x100.png'
+        });
+
+        // Attach event listener to Hero section Buy Now button
+        document.getElementById('purchase-hero').addEventListener('click', (e) => {
+            e.preventDefault();
+            handler.open({
+                name: 'ZeroState',
+                licenses: 1,
+                purchaseCompleted: (response) => {
+                    console.log('Purchase completed:', response);
+                    console.log('User email:', response.user.email);
+                    console.log('License key:', response.license.key);
+                },
+                success: (response) => {
+                    console.log('Checkout closed after successful purchase:', response);
+                    console.log('User email:', response.user.email);
+                    console.log('License key:', response.license.key);
+                }
+            });
+        });
+
+        // Attach event listener to Pricing section Buy Now button
+        document.getElementById('purchase-pricing').addEventListener('click', (e) => {
+            e.preventDefault();
+            handler.open({
+                name: 'ZeroState',
+                licenses: 1,
+                purchaseCompleted: (response) => {
+                    console.log('Purchase completed:', response);
+                    console.log('User email:', response.user.email);
+                    console.log('License key:', response.license.key);
+                },
+                success: (response) => {
+                    console.log('Checkout closed after successful purchase:', response);
+                    console.log('User email:', response.user.email);
+                    console.log('License key:', response.license.key);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
